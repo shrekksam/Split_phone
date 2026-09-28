@@ -15,12 +15,17 @@ import android.widget.Toast;
  * Correctif v1.3 : elle RESTE AU PREMIER PLAN le temps du lancement du split.
  * Sur Android 14/15, un startActivity depuis un contexte d'arrière-plan est
  * bloqué ; en gardant une activité au premier plan jusqu'à la fin de la cascade,
- * le lancement est autorisé. Un filet de sécurité (8 s) garantit qu'on ne reste
+ * le lancement est autorisé. Un filet de sécurité garantit qu'on ne reste
  * jamais bloqué au premier plan.
+ *
+ * Correctif v1.5 : le filet passe de 8 s à 12 s. La cascade accessibilité peut
+ * désormais RECONSTRUIRE un split (sortie confirmée → A → bascule vérifiée → B),
+ * soit ~7 s dans le pire cas ; à 8 s l'activité se terminait parfois AVANT la
+ * fin du lancement, et Android 14/15 bloquait alors le démarrage de B.
  */
 public class LaunchSplitActivity extends Activity {
 
-    private static final long SAFETY_TIMEOUT_MS = 8000;
+    private static final long SAFETY_TIMEOUT_MS = 12000;
 
     private boolean finished = false;
 

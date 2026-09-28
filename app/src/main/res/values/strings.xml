@@ -106,7 +106,7 @@
 
     <!-- Accessibilité (service) -->
     <string name="accessibility_service_label">SplitLauncher — Split automatique</string>
-    <string name="accessibility_service_description">Permet à SplitLauncher de déclencher l\'écran partagé automatiquement, sans root.\n\nPour vérifier que le partage est bien actif, le service lit la STRUCTURE des fenêtres (leur type, notamment la présence du séparateur d\'écran partagé). Il ne lit ni ne transmet AUCUN contenu (texte, champs de saisie, images).\n\nDivulgation : ce service d\'accessibilité est utilisé uniquement pour lancer et vérifier l\'écran partagé — il ne réalise aucune autre action et n\'exécute aucun script automatisé.</string>
+    <string name="accessibility_service_description">Permet à SplitLauncher de déclencher l\'écran partagé automatiquement, sans root.\n\nPour vérifier que le partage est bien actif, le service lit la STRUCTURE des fenêtres : leur type (présence du séparateur d\'écran partagé) et leurs dimensions à l\'écran (deux applications occupant deux régions distinctes). Il ne lit ni ne transmet AUCUN contenu (texte, champs de saisie, images).\n\nDivulgation : ce service d\'accessibilité est utilisé uniquement pour lancer et vérifier l\'écran partagé — il ne réalise aucune autre action et n\'exécute aucun script automatisé.</string>
 
     <!-- Tuile & raccourci -->
     <string name="tile_label">Split</string>

@@ -8,13 +8,20 @@
     - canRetrieveWindowContent="true"
     - flagRetrieveInteractiveWindows
 
-  Cela permet de lire la STRUCTURE des fenêtres (notamment la présence d'un
-  TYPE_SPLIT_SCREEN_DIVIDER). Aucun CONTENU (texte, champs de saisie) n'est lu
-  ni transmis : la vérification se limite au type des fenêtres. Cette utilisation
-  est clairement divulguée à l'utilisateur (voir la description ci-dessous).
+  Correctif v1.5 : on écoute AUSSI typeWindowsChanged. Les attentes
+  (waitForSplit / waitForSplitExit) sont ainsi ÉVÉNEMENTIELLES — réveillées dès
+  que les fenêtres changent — au lieu de sonder à l'aveugle : confirmation plus
+  rapide et beaucoup moins d'appels système.
+
+  Cela permet de lire la STRUCTURE des fenêtres : leur TYPE (notamment la
+  présence d'un TYPE_SPLIT_SCREEN_DIVIDER) et leurs DIMENSIONS à l'écran (pour
+  reconnaître deux applications occupant deux régions distinctes). Aucun
+  CONTENU (texte, champs de saisie, images) n'est lu ni transmis : getRoot()
+  n'est jamais appelé. Cette utilisation est clairement divulguée à
+  l'utilisateur (voir la description ci-dessous).
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowsChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"
     android:canRetrieveWindowContent="true"

@@ -14,21 +14,36 @@ import android.os.Build;
  *
  * Correctifs v1.3 :
  *   - VÉRIFICATION réelle du split : on n'affirme plus « Split lancé » sur la
- *     seule foi de {@code performGlobalAction()}. On attend (polling) la présence
- *     effective du diviseur via {@link SplitAccessibilityService#waitForSplit}.
+ *     seule foi de {@code performGlobalAction()}. On attend la confirmation
+ *     effective de l'état via {@link SplitAccessibilityService#waitForSplit}.
  *   - GESTION « déjà en split » : GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN est un
  *     BASCULEMENT. Si l'utilisateur est déjà en split, on ne bascule PAS (sinon
  *     on quitte le split) : on ajoute simplement B à la moitié existante.
  *   - RATIO : il n'est PAS applicable via l'accessibilité (les bounds hors mode
  *     freeform sont ignorés par AOSP). Il est appliqué uniquement sur le chemin
  *     shell ({@link ShellSplitter}).
+ *
+ * Correctifs v1.5 :
+ *   - CONNEXION : le service est lié de façon asynchrone. On l'attend
+ *     brièvement ({@link SplitAccessibilityService#awaitConnection}) au lieu
+ *     d'abandonner l'accessibilité juste après son activation.
+ *   - RECONSTRUCTION : si l'ajout de B referme le split (OEM capricieux), on
+ *     repart d'une base PROPRE — sortie confirmée via
+ *     {@link SplitAccessibilityService#waitForSplitExit}, puis A, bascule
+ *     vérifiée, B.
  */
 public class AndroidSplitPlatform implements SplitEngine.Platform {
 
-    /** Délai maximal d'attente de l'apparition du diviseur après le basculement. */
+    /** Délai maximal d'attente de la CONFIRMATION du split après basculement. */
     private static final long SPLIT_WAIT_MS = 2500;
     /** Délai maximal d'attente après le lancement de A (avant le basculement). */
     private static final long FOREGROUND_WAIT_MS = 1200;
+    /** Délai maximal d'attente de la connexion du service d'accessibilité. */
+    private static final long CONNECT_WAIT_MS = 1200;
+    /** Délai maximal d'attente de la SORTIE effective d'un split résiduel. */
+    private static final long EXIT_WAIT_MS = 1200;
+    /** Délai de contrôle : le split a-t-il survécu à l'ajout de B ? */
+    private static final long REJOIN_WAIT_MS = 800;
 
     private final Context ctx;
     private final float ratio; // fraction de la première moitié (0.5 = 50/50, 0.7 = 70/30)
@@ -57,36 +72,56 @@ public class AndroidSplitPlatform implements SplitEngine.Platform {
     @Override
     public boolean performAccessibilitySplit(AppInfo a, AppInfo b, boolean landscape,
                                              boolean alreadyInSplit) {
-        SplitAccessibilityService svc = SplitAccessibilityService.getInstance();
+        // Le système lie le service de façon ASYNCHRONE : juste après son
+        // activation, il est « activé » sans être encore connecté.
+        SplitAccessibilityService svc =
+                SplitAccessibilityService.awaitConnection(ctx, CONNECT_WAIT_MS);
         if (svc == null) return false;
         try {
-            if (alreadyInSplit) {
+            if (alreadyInSplit || svc.isInSplitScreen()) {
                 // Déjà en split : NE PAS basculer (sinon on quitte le split).
                 // On lance simplement B en adjacent pour qu'elle rejoigne l'autre moitié.
                 launchAdjacent(b, landscape);
-                return true;
+
+                // CONTRÔLE : sur certains OEM, l'ajout referme le split. On ne
+                // prétend pas avoir réussi sans l'avoir vérifié.
+                if (svc.waitForSplit(REJOIN_WAIT_MS)) return true;
             }
-
-            // 1) Lancer A et attendre qu'elle soit au premier plan.
-            ctx.startActivity(IntentLauncher.buildLaunchIntent(a));
-            sleep(FOREGROUND_WAIT_MS);
-
-            // 2) Basculer en écran partagé.
-            if (!svc.toggleSplitScreen()) return false;
-
-            // 3) VÉRIFIER que le split est réellement actif (diviseur présent).
-            //    Remplace les délais fixes fragiles par une attente vérifiée.
-            if (!svc.waitForSplit(SPLIT_WAIT_MS)) {
-                // Le basculement n'a pas abouti : on ne prétend pas avoir réussi.
-                return false;
-            }
-
-            // 4) Lancer B : elle rejoint l'autre moitié.
-            launchAdjacent(b, landscape);
-            return true;
+            return buildSplitFromScratch(svc, a, b, landscape);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Construit un split complet, chaque étape étant CONFIRMÉE :
+     * sortie d'un éventuel split résiduel → A au premier plan → bascule
+     * vérifiée → B en adjacent.
+     */
+    private boolean buildSplitFromScratch(SplitAccessibilityService svc,
+                                          AppInfo a, AppInfo b, boolean landscape) {
+        // Vérification IMPOSSIBLE (fenêtres illisibles) : on ne bascule PAS à
+        // l'aveugle. On rend la main à la cascade (shell, puis mode assisté)
+        // plutôt que de perturber l'état courant sans pouvoir rien confirmer.
+        if (!svc.canVerifySplit()) return false;
+
+        // 0) Base PROPRE. Sans sortie CONFIRMÉE (waitForSplitExit), la bascule
+        //    de l'étape 2 retomberait sur un split encore en cours de fermeture
+        //    et le rouvrirait avec les mauvaises applications.
+        if (!svc.exitSplitScreen(EXIT_WAIT_MS)) return false;
+
+        // 1) Lancer A et attendre qu'elle soit au premier plan.
+        ctx.startActivity(IntentLauncher.buildLaunchIntent(a));
+        sleep(FOREGROUND_WAIT_MS);
+
+        // 2+3) Basculer en écran partagé PUIS VÉRIFIER que le split est
+        //      réellement actif (diviseur, ou deux fenêtres d'app dans des
+        //      régions distinctes). Remplace les délais fixes fragiles.
+        if (!svc.enterSplitScreen(SPLIT_WAIT_MS)) return false;
+
+        // 4) Lancer B : elle rejoint l'autre moitié.
+        launchAdjacent(b, landscape);
+        return true;
     }
 
     /** Lance B en « adjacent » (rejoint l'autre moitié du split). */
