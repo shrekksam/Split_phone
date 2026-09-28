@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Raccourci statique : lancer le profil ACTIF en un tap depuis l'écran d'accueil.
+
+  Correctif v1.3 : la catégorie <categories android:name="android.shortcut.conversation"/>
+  a été RETIRÉE — elle est réservée aux raccourcis de conversation (Messenger/chat)
+  et n'a pas de sens ici. Des raccourcis DYNAMIQUES par profil (épinglables) sont
+  publiés par ShortcutHelper au démarrage de l'application.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="launch_active_profile"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_short_label"
+        android:shortcutLongLabel="@string/shortcut_long_label">
+        <intent
+            android:action="com.ninja.splitlauncher.action.LAUNCH_PROFILE"
+            android:targetPackage="com.ninja.splitlauncher"
+            android:targetClass="com.ninja.splitlauncher.LaunchSplitActivity" />
+    </shortcut>
+</shortcuts>

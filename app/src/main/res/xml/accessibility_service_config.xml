@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuration du service d'accessibilité.
+
+  Correctif v1.3 : le service doit pouvoir VÉRIFIER que le split est réellement
+  actif (et non croire le résultat de GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN sur
+  parole). On active donc :
+    - canRetrieveWindowContent="true"
+    - flagRetrieveInteractiveWindows
+
+  Cela permet de lire la STRUCTURE des fenêtres (notamment la présence d'un
+  TYPE_SPLIT_SCREEN_DIVIDER). Aucun CONTENU (texte, champs de saisie) n'est lu
+  ni transmis : la vérification se limite au type des fenêtres. Cette utilisation
+  est clairement divulguée à l'utilisateur (voir la description ci-dessous).
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"
+    android:canRetrieveWindowContent="true"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="100"
+    android:settingsActivity="com.ninja.splitlauncher.MainActivity" />

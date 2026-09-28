@@ -1,0 +1,15 @@
+# Gradle
+.gradle/
+build/
+*.iml
+
+# Secrets & config locale
+local.properties
+keystore.jks
+*.jks
+*.keystore
+
+# IDE
+.idea/
+.DS_Store
+captures/

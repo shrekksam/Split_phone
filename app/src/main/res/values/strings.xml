@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SplitLauncher</string>
+    <string name="select_app">Choisir une application</string>
+    <string name="no_apps">Aucune application</string>
+
+    <string name="slot_a_title">Application A</string>
+    <string name="slot_b_title">Application B</string>
+    <string name="tap_to_choose">Appuyer pour choisir</string>
+    <string name="handle_label">poignée</string>
+    <string name="handle_content_description">Inverser les applications A et B</string>
+
+    <string name="btn_launch_split">Lancer en Split</string>
+    <string name="btn_save_profile">Mémoriser le profil</string>
+    <string name="btn_lock_orientation">Verrouiller orientation</string>
+    <string name="btn_landscape">Paysage permanent</string>
+    <string name="btn_floating_bar">Barre flottante</string>
+    <string name="btn_autostart">Démarrage auto</string>
+
+    <string name="search_hint">Rechercher…</string>
+
+    <!-- Profils -->
+    <string name="profile_label">Profil</string>
+    <string name="btn_new_profile">Nouveau</string>
+    <string name="btn_rename_profile">Renommer</string>
+    <string name="btn_delete_profile">Supprimer</string>
+    <string name="dialog_new_profile_title">Nouveau profil</string>
+    <string name="dialog_rename_profile_title">Renommer le profil</string>
+    <string name="dialog_profile_name_hint">Nom du profil</string>
+    <string name="profile_default_name">Profil</string>
+    <string name="toast_cannot_delete_last">Impossible de supprimer le dernier profil</string>
+    <string name="dialog_delete_profile_title">Supprimer le profil ?</string>
+    <string name="dialog_delete_profile_message">Cette action est définitive.</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Annuler</string>
+
+    <!-- Ratio -->
+    <string name="ratio_label">Ratio de split</string>
+    <string name="ratio_format">%1$d / %2$d</string>
+    <string name="ratio_unsupported_note">Le ratio personnalisé n\'est appliqué que via Shizuku ou le mode root (chemin shell). Avec la seule accessibilité, le système impose un partage 50/50.</string>
+
+    <!-- Mode root -->
+    <string name="btn_root">Mode root (avancé)</string>
+    <string name="toast_root_on">Mode root activé — repli « su » autorisé</string>
+    <string name="toast_root_off">Mode root désactivé</string>
+
+    <!-- Garde anti-taps -->
+    <string name="toast_launch_in_progress">Lancement déjà en cours…</string>
+    <string name="toast_busy">Un lancement est déjà en cours</string>
+
+    <!-- Note paramètres restreints (sideload Android 13+) -->
+    <string name="restricted_settings_note">Installé hors Play Store ? Sur Android 13+, autorisez les « paramètres restreints » pour ce service d\'accessibilité (Paramètres → Applications → SplitLauncher → menu ⋮).</string>
+
+    <!-- Accessibilité / Shizuku -->
+    <string name="accessibility_title">Split automatique</string>
+    <string name="accessibility_enabled">Accessibilité activée — split fiable</string>
+    <string name="accessibility_disabled">Accessibilité désactivée — split non fiable</string>
+    <string name="btn_enable_accessibility">Activer l\'accessibilité</string>
+    <string name="btn_shizuku">Autoriser Shizuku</string>
+    <string name="toast_shizuku_unavailable">Shizuku non installé ou non démarré</string>
+    <string name="toast_shizuku_available">Shizuku autorisé — shell privilégié disponible</string>
+    <string name="toast_shizuku_prompt">Suivez l\'invite Shizuku pour autoriser l\'accès</string>
+
+    <string name="toast_profile_saved">Profil mémorisé</string>
+    <string name="toast_select_two">Veuillez choisir deux applications</string>
+    <string name="toast_same_app">Les deux slots contiennent la même application</string>
+    <string name="toast_launching">Lancement en Split…</string>
+    <string name="toast_apps_swapped">Applications inversées</string>
+    <string name="toast_overlay_needed">Autorisation d\'affichage par-dessus les autres apps requise</string>
+    <string name="toast_landscape_on">Mode paysage permanent activé</string>
+    <string name="toast_landscape_off">Mode paysage permanent désactivé</string>
+    <string name="toast_lock_on">Orientation verrouillée</string>
+    <string name="toast_lock_off">Orientation libre</string>
+    <string name="toast_floating_on">Barre flottante activée</string>
+    <string name="toast_floating_off">Barre flottante désactivée</string>
+    <string name="toast_autostart_on">Démarrage automatique activé</string>
+    <string name="toast_autostart_off">Démarrage automatique désactivé</string>
+
+    <!-- Mode assisté -->
+    <string name="assisted_mode_title">Mode assisté</string>
+    <string name="assisted_mode_message">Cet appareil ne garantit pas le Split automatique.\n\nPour un vrai partage d\'écran :\n1. Ouvrez le sélecteur d\'applications récentes (carré).\n2. Appuyez sur l\'icône de l\'application.\n3. Choisissez « Écran partagé ».\n\nLa barre flottante peut aussi relancer vos deux applis.</string>
+    <string name="assisted_mode_ok">Compris</string>
+
+    <!-- Statut -->
+    <string name="status_apps_format">A : %1$s   •   B : %2$s</string>
+    <string name="status_none">—</string>
+    <string name="status_line_format">Orientation : %1$s   •   Barre flottante : %2$s   •   Démarrage auto : %3$s</string>
+    <string name="status_orientation_landscape">paysage permanent</string>
+    <string name="status_orientation_locked">verrouillée</string>
+    <string name="status_orientation_free">libre</string>
+    <string name="status_on">ON</string>
+    <string name="status_off">OFF</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_name">Barre flottante Split</string>
+    <string name="notif_title">SplitLauncher actif</string>
+    <string name="notif_text">Barre flottante de contrôle Split</string>
+    <string name="notif_action_stop">Arrêter</string>
+    <string name="notif_boot_channel_name">Démarrage automatique Split</string>
+    <string name="notif_boot_title">SplitLauncher</string>
+    <string name="notif_boot_text">Appuyer pour lancer le profil en écran partagé</string>
+
+    <string name="floating_launch">Split</string>
+    <string name="floating_close">Fermer</string>
+    <string name="floating_close_content_description">Fermer la barre flottante</string>
+
+    <!-- Accessibilité (service) -->
+    <string name="accessibility_service_label">SplitLauncher — Split automatique</string>
+    <string name="accessibility_service_description">Permet à SplitLauncher de déclencher l\'écran partagé automatiquement, sans root.\n\nPour vérifier que le partage est bien actif, le service lit la STRUCTURE des fenêtres (leur type, notamment la présence du séparateur d\'écran partagé). Il ne lit ni ne transmet AUCUN contenu (texte, champs de saisie, images).\n\nDivulgation : ce service d\'accessibilité est utilisé uniquement pour lancer et vérifier l\'écran partagé — il ne réalise aucune autre action et n\'exécute aucun script automatisé.</string>
+
+    <!-- Tuile & raccourci -->
+    <string name="tile_label">Split</string>
+    <string name="shortcut_short_label">Split</string>
+    <string name="shortcut_long_label">Lancer le profil en écran partagé</string>
+
+    <string name="menu_about">À propos</string>
+</resources>

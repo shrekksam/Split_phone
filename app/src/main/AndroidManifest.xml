@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      NOTE Play Store : QUERY_ALL_PACKAGES (restreint) est REMPLACÉ par une
+      balise <queries> ciblant uniquement les applis lançables (MAIN/LAUNCHER).
+      C'est exactement ce dont le sélecteur a besoin.
+    -->
+
+    <!-- Barre flottante (overlay) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- Démarrage automatique -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Service de premier plan (barre flottante) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      Visibilité des paquets : on ne voit QUE les applis ayant une activité
+      lançable. Suffisant pour le sélecteur, et conforme Play Store.
+    -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".SplitApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SplitLauncher"
+        tools:targetApi="35">
+
+        <!-- Écran principal : interface 2 slots + poignée -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <!-- Sélecteur d'applications -->
+        <activity
+            android:name=".AppSelector"
+            android:exported="false"
+            android:label="@string/select_app"
+            android:theme="@style/Theme.SplitLauncher" />
+
+        <!--
+          Activité transparente servant de cible aux raccourcis / à la tuile /
+          à la notification de repli. Elle RESTE au premier plan le temps du
+          lancement (pas de noHistory : sinon elle serait détruite dès que
+          l'appli A passe au premier plan, et les startActivity suivants
+          seraient bloqués sur Android 14/15). Elle se termine d'elle-même.
+        -->
+        <activity
+            android:name=".LaunchSplitActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.SplitLauncher.Transparent">
+            <intent-filter>
+                <action android:name="com.ninja.splitlauncher.action.LAUNCH_PROFILE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Barre flottante (service de premier plan) -->
+        <service
+            android:name=".FloatingBarService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="floating_split_control_bar" />
+        </service>
+
+        <!-- Service d'accessibilité : déclenche le split natif sans root -->
+        <service
+            android:name=".SplitAccessibilityService"
+            android:exported="true"
+            android:label="@string/accessibility_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <!-- Tuile des Réglages rapides -->
+        <service
+            android:name=".SplitTileService"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Démarrage automatique au boot -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Provider Shizuku : permet à l'appli Shizuku de nous accorder l'accès shell -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+    </application>
+
+</manifest>
